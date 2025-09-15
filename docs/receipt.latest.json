@@ -1,1 +1,11 @@
-
+{
+  "claim":"Envelope holds despite path chaos",
+  "because":["kappa<0.03","phi_star>0.8","tau>90d"],
+  "but": ["chi spiked at t+36h"],
+  "so":"Seasonal mean verified inside ensemble band",
+  "model":"climate/envelope-vs-path",
+  "window":"2025-JJA, EUR",
+  "thresholds":{"kappa":0.03,"phi_star":0.8,"tau_days":90},
+  "telem":{"kappa":0.018,"chi":0.22,"residue":0.006,"d_topo":0.02,"phi_star":0.91,"tau":180,"ULT_topo":0.86},
+  "verify":{"schema":"receipt.v0.1","ts":"2025-09-15T19:00:00Z"}
+}
