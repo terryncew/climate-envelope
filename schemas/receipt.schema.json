@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openline.dev/schemas/receipt.schema.json",
+  "title": "OpenLine Receipt v0.1",
+  "type": "object",
+  "required": ["claim","telem","model","verify"],
+  "properties": {
+    "claim": {"type":"string","minLength":1},
+    "because": {"type":"array","items":{"type":"string"}},
+    "but": {"type":"array","items":{"type":"string"}},
+    "so": {"type":"string"},
+    "model": {"type":"string"},
+    "window": {"type":"string"},
+    "thresholds": {"type":"object"},
+    "telem": {
+      "type":"object",
+      "required":["kappa","chi","residue","d_topo","phi_star","tau","ULT_topo"],
+      "properties": {
+        "kappa":{"type":"number","minimum":0},
+        "chi":{"type":"number","minimum":0},
+        "residue":{"type":"number"},
+        "d_topo":{"type":"number","minimum":0,"maximum":1},
+        "phi_star":{"type":"number","minimum":0,"maximum":1},
+        "tau":{"type":"number","minimum":0},
+        "ULT_topo":{"type":"number","minimum":0,"maximum":1}
+      }
+    },
+    "verify": {
+      "type":"object",
+      "required":["schema","ts"],
+      "properties":{
+        "schema":{"const":"receipt.v0.1"},
+        "ts":{"type":"string"}
+      }
+    },
+    "sig": {
+      "type":"object",
+      "required":["alg","key","value"],
+      "properties":{
+        "alg":{"type":"string"},
+        "key":{"type":"string"},
+        "value":{"type":"string"}
+      }
+    }
+  }
+}
