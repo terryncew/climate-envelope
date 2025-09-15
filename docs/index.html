@@ -1,0 +1,56 @@
+<!doctype html><meta charset="utf-8">
+<title>OpenLine Receipts Hub</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:24px;max-width:900px}
+  h1{font-weight:700;margin-bottom:4px} .sub{color:#666;margin:0 0 16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .card{border:1px solid #ddd;border-radius:12px;padding:16px}
+  .pill{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid #ccc;display:inline-block}
+  .ok{border-color:#2b8;}.bad{border-color:#c44;}
+  code{background:#f6f6f6;padding:2px 4px;border-radius:4px}
+</style>
+<h1>OpenLine Receipts</h1>
+<p class="sub">Live, verifiable receipts from your repos (no servers).</p>
+<div class="grid" id="grid"></div>
+<script>
+const SOURCES = [
+  // add/remove repos here (raw GitHub URLs allowed)
+  "https://raw.githubusercontent.com/<you>/climate-envelope/main/docs/receipt.latest.json"
+];
+
+const grid = document.querySelector('#grid');
+const fmt = x => (typeof x === 'number') ? (Math.round(x*100)/100) : x;
+
+function renderCard(src, j){
+  const ok = j?.verify?.schema === "receipt.v0.1";
+  const pill = `<span class="pill ${ok?'ok':'bad'}">${ok?'Verified schema v0.1':'Unverified'}</span>`;
+  const telem = j.telem || {};
+  grid.insertAdjacentHTML('beforeend', `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>${j.claim||'No claim'}</strong> ${pill}
+      </div>
+      <div style="margin:8px 0;color:#555">${j.model||''} · ${j.window||''}</div>
+      <div>ULT<sub>topo</sub>: <strong>${fmt(telem.ULT_topo)||'—'}</strong></div>
+      <div style="margin:8px 0 4px 0">
+        κ=${fmt(telem.kappa)} · χ=${fmt(telem.chi)} · h=${fmt(telem.residue)} · D<sub>topo</sub>=${fmt(telem.d_topo)} · Φ*=${fmt(telem.phi_star)} · τ=${fmt(telem.tau)}
+      </div>
+      <div style="font-size:12px;color:#888">source: <code>${src}</code></div>
+    </div>
+  `);
+}
+
+async function load(){
+  for(const src of SOURCES){
+    try{
+      const r = await fetch(src, {cache:"no-store"});
+      const j = await r.json();
+      renderCard(src, j);
+    }catch(e){
+      grid.insertAdjacentHTML('beforeend', `<div class="card"><strong>Load failed</strong><div>${src}</div></div>`);
+    }
+  }
+}
+load();
+</script>
